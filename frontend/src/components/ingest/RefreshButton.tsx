@@ -5,17 +5,13 @@ import { useAppDispatch } from '../../store/hooks';
 import { setActiveJob } from '../../store/slices/ingestSlice';
 import { useTriggerIngestMutation } from '../../store/api/newsApi';
 import { useIngestPolling } from '../../hooks/useIngestPolling';
-
 export const RefreshButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const [triggerIngest, { isLoading: isTriggerLoading }] = useTriggerIngestMutation();
   const { isPolling, status, error } = useIngestPolling();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-
   const isRunning = isTriggerLoading || isPolling;
-
-  // Watch for done/failed transitions
   useEffect(() => {
     if (status === 'done' && !isPolling) {
       setShowSuccess(true);
@@ -28,7 +24,6 @@ export const RefreshButton: React.FC = () => {
       return () => clearTimeout(t);
     }
   }, [status, isPolling]);
-
   const handleClick = async () => {
     try {
       setShowSuccess(false);
@@ -41,7 +36,6 @@ export const RefreshButton: React.FC = () => {
       return () => clearTimeout(t);
     }
   };
-
   if (showSuccess) {
     return (
       <div
@@ -64,7 +58,6 @@ export const RefreshButton: React.FC = () => {
       </div>
     );
   }
-
   if (showError) {
     return (
       <div
@@ -87,7 +80,6 @@ export const RefreshButton: React.FC = () => {
       </div>
     );
   }
-
   return (
     <Button
       variant="primary"

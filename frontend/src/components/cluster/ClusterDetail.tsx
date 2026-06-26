@@ -4,12 +4,9 @@ import { Layers, CalendarRange, FileText } from 'lucide-react';
 import { useGetClusterByIdQuery } from '../../store/api/newsApi';
 import { ArticleCard } from './ArticleCard';
 import { Spinner } from '../ui/Spinner';
-
 interface ClusterDetailProps {
   clusterId: string;
 }
-
-/* ── Skeleton ──────────────────────────────────────────────── */
 const DetailSkeleton: React.FC = () => (
   <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
     <div className="skeleton" style={{ width: '70%', height: '18px', marginBottom: '4px' }} />
@@ -34,13 +31,9 @@ const DetailSkeleton: React.FC = () => (
     ))}
   </div>
 );
-
-/* ── Main Component ──────────────────────────────────────── */
 export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
   const { data, isLoading, isError } = useGetClusterByIdQuery(clusterId);
-
   if (isLoading) return <DetailSkeleton />;
-
   if (isError || !data) {
     return (
       <div
@@ -62,19 +55,16 @@ export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
       </div>
     );
   }
-
   const startFormatted = data.startTime
     ? format(new Date(data.startTime), 'MMM d, yyyy HH:mm')
     : null;
   const endFormatted = data.endTime
     ? format(new Date(data.endTime), 'HH:mm')
     : null;
-
   const articles = data.articles ?? [];
-
   return (
     <div className="animate-fade-in">
-      {/* Cluster meta header */}
+      {}
       <div
         style={{
           padding: '20px 24px 16px',
@@ -82,9 +72,9 @@ export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
           background: 'rgba(99, 102, 241, 0.03)',
         }}
       >
-        {/* Stats row */}
+        {}
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-          {/* Article count */}
+          {}
           <div
             style={{
               display: 'flex',
@@ -104,8 +94,7 @@ export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
             </strong>
             <span>article{data.articleCount !== 1 ? 's' : ''}</span>
           </div>
-
-          {/* Time range */}
+          {}
           {startFormatted && (
             <div
               style={{
@@ -128,8 +117,7 @@ export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
             </div>
           )}
         </div>
-
-        {/* Source breakdown if articles have sources */}
+        {}
         {articles.length > 0 && (() => {
           const counts: Record<string, number> = {};
           articles.forEach((a) => {
@@ -164,8 +152,7 @@ export const ClusterDetail: React.FC<ClusterDetailProps> = ({ clusterId }) => {
           );
         })()}
       </div>
-
-      {/* Article list */}
+      {}
       <div style={{ padding: '12px 16px 24px' }}>
         {articles.length === 0 ? (
           <div

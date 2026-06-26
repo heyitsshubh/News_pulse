@@ -9,18 +9,14 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setSelectedCluster, clearSelectedCluster } from '../store/slices/timelineSlice';
 import type { TimelineItem } from '../types/timeline';
 import { Spinner } from '../components/ui/Spinner';
-
 export const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
   const selectedClusterId = useAppSelector((s) => s.timeline.selectedClusterId);
   const activeSources = useAppSelector((s) => s.filters.activeSources);
-
   const { data: timelineItems, isLoading, isError, isFetching } = useGetTimelineQuery(undefined, {
     pollingInterval: 0,
   });
-
   const [panelTitle, setPanelTitle] = useState('Cluster Details');
-
   const handleClusterClick = useCallback(
     (id: string, label: string) => {
       dispatch(setSelectedCluster(id));
@@ -28,20 +24,13 @@ export const HomePage: React.FC = () => {
     },
     [dispatch]
   );
-
   const handlePanelClose = useCallback(() => {
     dispatch(clearSelectedCluster());
   }, [dispatch]);
-
-  // Client-side filtering by active sources is conceptual at the cluster level.
-  // Since clusters don't directly carry source info in the timeline endpoint,
-  // we show all clusters but filter is visually active on the source pills.
-  // When backend returns source-annotated clusters this can be wired up.
   const filteredItems: TimelineItem[] = Array.isArray(timelineItems) ? timelineItems : [];
-
   return (
     <AppShell>
-      {/* ── Toolbar ─────────────────────────────────────────── */}
+      {}
       <div
         style={{
           display: 'flex',
@@ -70,8 +59,7 @@ export const HomePage: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Cluster count badge */}
+        {}
         {filteredItems.length > 0 && (
           <div
             style={{
@@ -89,8 +77,7 @@ export const HomePage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* ── Timeline Area ─────────────────────────────────── */}
+      {}
       <div
         style={{
           flex: 1,
@@ -99,7 +86,7 @@ export const HomePage: React.FC = () => {
           overflowY: 'auto',
         }}
       >
-        {/* Section header */}
+        {}
         {filteredItems.length > 0 && (
           <div
             style={{
@@ -133,8 +120,7 @@ export const HomePage: React.FC = () => {
             </span>
           </div>
         )}
-
-        {/* Chart card */}
+        {}
         <div
           style={{
             background: 'rgba(15, 23, 42, 0.6)',
@@ -153,8 +139,7 @@ export const HomePage: React.FC = () => {
             isError={isError}
           />
         </div>
-
-        {/* Hint when items are showing */}
+        {}
         {filteredItems.length > 0 && (
           <p
             style={{
@@ -168,8 +153,7 @@ export const HomePage: React.FC = () => {
           </p>
         )}
       </div>
-
-      {/* ── Slide-in Detail Panel ─────────────────────────── */}
+      {}
       <SlidePanel
         isOpen={!!selectedClusterId}
         onClose={handlePanelClose}

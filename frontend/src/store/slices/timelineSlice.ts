@@ -1,13 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 interface TimelineState {
   selectedClusterId: string | null;
 }
-
 const initialState: TimelineState = {
   selectedClusterId: null,
 };
-
 const timelineSlice = createSlice({
   name: 'timeline',
   initialState,
@@ -20,6 +17,5 @@ const timelineSlice = createSlice({
     },
   },
 });
-
 export const { setSelectedCluster, clearSelectedCluster } = timelineSlice.actions;
 export default timelineSlice.reducer;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Layers } from 'lucide-react';
-
 export const TimelineEmpty: React.FC = () => {
   return (
     <div
@@ -15,7 +14,7 @@ export const TimelineEmpty: React.FC = () => {
         textAlign: 'center',
       }}
     >
-      {/* Icon wrapper */}
+      {}
       <div
         className="animate-float"
         style={{
@@ -39,7 +38,6 @@ export const TimelineEmpty: React.FC = () => {
           }}
         />
       </div>
-
       <div>
         <h3
           style={{
@@ -72,8 +70,7 @@ export const TimelineEmpty: React.FC = () => {
           in the top bar to ingest the latest stories and build topic clusters.
         </p>
       </div>
-
-      {/* Decorative dots */}
+      {}
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
         {[0, 0.2, 0.4].map((delay, i) => (
           <div

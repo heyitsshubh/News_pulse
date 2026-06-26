@@ -1,9 +1,7 @@
 import React from 'react';
 import { Spinner } from './Spinner';
-
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
@@ -11,7 +9,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 }
-
 const variantStyles: Record<Variant, React.CSSProperties & { '--btn-hover-bg'?: string }> = {
   primary: {
     background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
@@ -34,13 +31,11 @@ const variantStyles: Record<Variant, React.CSSProperties & { '--btn-hover-bg'?: 
     border: '1px solid rgba(148, 163, 184, 0.2)',
   },
 };
-
 const sizeStyles: Record<Size, React.CSSProperties> = {
   sm: { fontSize: '12px', padding: '6px 12px', borderRadius: '6px', gap: '6px' },
   md: { fontSize: '14px', padding: '9px 18px', borderRadius: '8px', gap: '8px' },
   lg: { fontSize: '15px', padding: '12px 24px', borderRadius: '10px', gap: '10px' },
 };
-
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
@@ -53,7 +48,6 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => {
   const isDisabled = disabled || loading;
-
   return (
     <button
       disabled={isDisabled}

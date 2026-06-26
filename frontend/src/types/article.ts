@@ -1,5 +1,4 @@
 export type Source = 'bbc' | 'npr' | 'guardian';
-
 export interface Article {
   id: string;
   url: string;

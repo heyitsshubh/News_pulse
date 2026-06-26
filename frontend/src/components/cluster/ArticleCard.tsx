@@ -3,26 +3,21 @@ import { ExternalLink, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { Article } from '../../types/article';
 import { Badge } from '../ui/Badge';
-
 interface ArticleCardProps {
   article: Article;
   index?: number;
 }
-
 const SOURCE_COLORS: Record<string, string> = {
   bbc: '#ef4444',
   npr: '#3b82f6',
   guardian: '#14b8a6',
 };
-
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, index = 0 }) => {
   const accentColor = SOURCE_COLORS[article.source] ?? '#6366f1';
-
   const timeAgo =
     article.publishedAt
       ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
       : 'Unknown time';
-
   return (
     <a
       href={article.url}
@@ -58,7 +53,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, index = 0 }) 
         el.style.boxShadow = 'none';
       }}
     >
-      {/* Source badge + time */}
+      {}
       <div
         style={{
           display: 'flex',
@@ -84,8 +79,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, index = 0 }) 
           {timeAgo}
         </div>
       </div>
-
-      {/* Headline */}
+      {}
       <div
         style={{
           display: 'flex',
@@ -116,8 +110,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, index = 0 }) 
           }}
         />
       </div>
-
-      {/* Summary */}
+      {}
       {article.summary && (
         <p
           className="line-clamp-2"

@@ -14,7 +14,6 @@ import type { TimelineItem } from '../../types/timeline';
 import { ClusterBar } from './ClusterBar';
 import { TimelineEmpty } from './TimelineEmpty';
 import { Spinner } from '../ui/Spinner';
-
 interface TimelineChartProps {
   items: TimelineItem[];
   selectedClusterId: string | null;
@@ -22,8 +21,6 @@ interface TimelineChartProps {
   isLoading: boolean;
   isError: boolean;
 }
-
-/* ── Skeleton Rows ───────────────────────────────────────── */
 const TimelineSkeleton: React.FC = () => (
   <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '14px' }}>
     {Array.from({ length: 6 }).map((_, i) => (
@@ -49,8 +46,6 @@ const TimelineSkeleton: React.FC = () => (
     ))}
   </div>
 );
-
-/* ── Custom Tooltip ──────────────────────────────────────── */
 const CustomTooltip: React.FC<{
   active?: boolean;
   payload?: Array<{ payload: TimelineItem & { startMs: number; endMs: number } }>;
@@ -58,11 +53,9 @@ const CustomTooltip: React.FC<{
   if (!active || !payload?.length) return null;
   const item = payload[0]?.payload;
   if (!item) return null;
-
   const start = item.start ? format(new Date(item.start), 'MMM d, HH:mm') : '—';
   const end = item.end ? format(new Date(item.end), 'MMM d, HH:mm') : '—';
   const intensityPct = Math.round((item.intensity ?? 0) * 100);
-
   return (
     <div
       style={{
@@ -147,8 +140,6 @@ const CustomTooltip: React.FC<{
     </div>
   );
 };
-
-/* ── Custom Y-Axis Tick ──────────────────────────────────── */
 const CustomYTick: React.FC<{
   x?: number;
   y?: number;
@@ -173,8 +164,6 @@ const CustomYTick: React.FC<{
     </text>
   );
 };
-
-/* ── Custom X-Axis Tick ──────────────────────────────────── */
 const CustomXTick: React.FC<{
   x?: number;
   y?: number;
@@ -195,8 +184,6 @@ const CustomXTick: React.FC<{
     </text>
   );
 };
-
-/* ── Main Component ──────────────────────────────────────── */
 export const TimelineChart: React.FC<TimelineChartProps> = ({
   items,
   selectedClusterId,
@@ -204,7 +191,6 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
   isLoading,
   isError,
 }) => {
-  // Convert items to chart data: [startMs, endMs] tuples
   const chartData = useMemo(() => {
     const safeItems = Array.isArray(items) ? items : [];
     return safeItems
@@ -212,50 +198,39 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
       .map((item) => {
         const startMs = new Date(item.start).getTime();
         let endMs = new Date(item.end).getTime();
-        
-        // Ensure a minimum visual width (1 hour) so single-article clusters render a visible bar
         if (endMs - startMs < 3600000) {
           endMs = startMs + 3600000;
         }
-
         return {
           ...item,
           startMs,
           endMs,
-          // Recharts needs a ranged bar: [startMs, endMs]
           range: [startMs, endMs] as [number, number],
-          // Label for Y axis (truncate)
           labelShort:
             item.label.length > 24 ? item.label.slice(0, 24) + '…' : item.label,
         };
       })
       .sort((a, b) => a.startMs - b.startMs);
   }, [items]);
-
   const allTimestamps = useMemo(
     () => chartData.flatMap((d) => [d.startMs, d.endMs]),
     [chartData]
   );
   const domainMin = allTimestamps.length ? Math.min(...allTimestamps) : 0;
   const domainMax = allTimestamps.length ? Math.max(...allTimestamps) : 1;
-  // Add 2% padding on each side
   const padding = (domainMax - domainMin) * 0.05;
   const domain: [number, number] = [
     domainMin - padding,
     domainMax + padding,
   ];
-
   const handleBarClick = useCallback(
     (data: { id: string; label: string }) => {
       if (data?.id) onClusterClick(data.id, data.label);
     },
     [onClusterClick]
   );
-
   const rowHeight = 48;
   const chartHeight = Math.max(300, chartData.length * rowHeight + 60);
-
-  /* ── Error ── */
   if (isError) {
     return (
       <div
@@ -279,8 +254,6 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
       </div>
     );
   }
-
-  /* ── Loading ── */
   if (isLoading) {
     return (
       <div>
@@ -303,12 +276,9 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
       </div>
     );
   }
-
-  /* ── Empty ── */
   if (!chartData.length) {
     return <TimelineEmpty />;
   }
-
   return (
     <div className="animate-fade-in" style={{ width: '100%' }}>
       <ResponsiveContainer width="100%" height={chartHeight}>
@@ -328,8 +298,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
             stroke="rgba(30, 41, 59, 0.8)"
             strokeDasharray="4 4"
           />
-
-          {/* X axis: time */}
+          {}
           <XAxis
             type="number"
             dataKey="endMs"
@@ -340,8 +309,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
             tickLine={false}
             axisLine={{ stroke: 'rgba(30, 41, 59, 0.6)' }}
           />
-
-          {/* Y axis: cluster labels */}
+          {}
           <YAxis
             type="category"
             dataKey="label"
@@ -350,7 +318,6 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
             tickLine={false}
             axisLine={false}
           />
-
           <Tooltip
             content={<CustomTooltip />}
             cursor={{
@@ -359,7 +326,6 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
               strokeWidth: 1,
             }}
           />
-
           <Bar
             dataKey="range"
             isAnimationActive={true}

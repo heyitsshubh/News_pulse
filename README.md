@@ -2,6 +2,10 @@
 
 > A full-stack system that pulls live news from RSS feeds, automatically clusters related articles by topic using TF-IDF, and visualises those clusters as a Gantt-style interactive timeline.
 
+**Live Frontend URL:** _[Add your Vercel URL here]_  
+**Live Backend API URL:** _[Add your Render URL here]_  
+**Video Walkthrough:** _[Add your Loom/OBS link here]_
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -143,20 +147,22 @@ npm run dev      # starts on http://localhost:5173
 
 ### Backend → Render
 
+We use a custom Dockerfile at the root of the repository to bundle both the Node API and Python scraper into a single free-tier container.
+
 1. Push repo to GitHub
 2. Create a new **Web Service** on [render.com](https://render.com)
-3. Set **Root Directory**: `backend`
-4. **Build Command**: `npm install && npm run build`
-5. **Start Command**: `npm start`
-6. Add env vars: `DATABASE_URL`, `FRONTEND_URL`, `NODE_ENV=production`, `PYTHON_CMD=python3`, `SCRAPER_PATH=../scraper/src/main.py`
+3. Connect your GitHub repo.
+4. Set **Environment**: `Docker` (Leave Root Directory completely blank)
+5. Add env vars: 
+   - `DATABASE_URL` (Your Neon Postgres URL)
+   - `FRONTEND_URL` (Set to your Vercel URL, e.g. `https://news-pulse-taupe.vercel.app/`)
 
 ### Frontend → Vercel
 
 1. Import repo on [vercel.com](https://vercel.com)
-2. Set **Root Directory**: `frontend`
-3. **Framework Preset**: Vite
-4. Add env var: `VITE_API_URL=https://your-render-backend-url.onrender.com`
-5. The `vercel.json` handles SPA routing rewrites automatically
+2. Edit **Root Directory** and select `frontend` (Vercel will auto-detect Vite)
+3. Add env var: `VITE_API_URL` (Set to your Render URL, e.g. `https://news-pulse-s4oo.onrender.com`)
+4. Click Deploy!
 
 ### Database → Neon
 
@@ -221,7 +227,3 @@ news-pulse/
 - **Cold starts**: Render free tier has ~30s cold starts — this is acceptable per the assessment.
 
 ---
-
-## 🎥 Video Walkthrough
-
-> Link: _[Add your Loom/OBS recording link here]_

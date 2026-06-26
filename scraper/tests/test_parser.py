@@ -1,115 +1,64 @@
-"""Unit tests for src/feeds/parser.py.
-
-Tests cover:
-- SHA-256 url_hash computation.
-- Date parsing from struct_time (feedparser format).
-- Date parsing from ISO string.
-- Fallback to NOW() when date is missing.
-- Skipping entries with no URL.
-- Skipping entries with no headline.
-- Correct extraction of content:encoded vs summary fields.
-- parse_feed returning normalised dicts.
-"""
-
+utf-8
 import hashlib
 import time
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from typing import Any
 from unittest.mock import MagicMock, patch
-
 import pytest
-
-# ---------------------------------------------------------------------------
-# Helpers we want to test directly (without going through the public API)
-# ---------------------------------------------------------------------------
 from src.feeds.parser import (
     _extract_summary,
     _parse_date,
     _sha256,
     parse_feed,
 )
-
-
-# ---------------------------------------------------------------------------
-# _sha256
-# ---------------------------------------------------------------------------
-
 class TestSha256:
-    """Tests for URL hashing."""
-
     def test_known_hash(self) -> None:
         url = "https://www.bbc.co.uk/news/world-12345"
         expected = hashlib.sha256(url.encode()).hexdigest()
         assert _sha256(url) == expected
-
     def test_empty_string(self) -> None:
         result = _sha256("")
         assert isinstance(result, str)
-        assert len(result) == 64  # SHA-256 hex digest is always 64 chars.
-
+        assert len(result) == 64  
     def test_different_urls_different_hashes(self) -> None:
         h1 = _sha256("https://example.com/a")
         h2 = _sha256("https://example.com/b")
         assert h1 != h2
-
     def test_same_url_same_hash(self) -> None:
         url = "https://example.com/stable"
         assert _sha256(url) == _sha256(url)
-
     def test_hash_length(self) -> None:
         assert len(_sha256("any string")) == 64
-
-
-# ---------------------------------------------------------------------------
-# _parse_date
-# ---------------------------------------------------------------------------
-
 class TestParseDate:
-    """Tests for date normalisation."""
-
     def test_returns_none_for_none(self) -> None:
         assert _parse_date(None) is None
-
     def test_struct_time(self) -> None:
         st = time.strptime("2024-01-15 12:00:00", "%Y-%m-%d %H:%M:%S")
         result = _parse_date(st)
         assert isinstance(result, datetime)
         assert result.tzinfo is not None
-
     def test_iso_string(self) -> None:
         result = _parse_date("2024-03-10T08:30:00+00:00")
         assert isinstance(result, datetime)
         assert result.year == 2024
         assert result.month == 3
         assert result.day == 10
-
     def test_rfc2822_string(self) -> None:
         result = _parse_date("Mon, 15 Jan 2024 12:00:00 GMT")
         assert isinstance(result, datetime)
         assert result.year == 2024
-
     def test_naive_datetime_gets_utc(self) -> None:
         result = _parse_date("2024-05-01 09:00:00")
         assert isinstance(result, datetime)
         assert result.tzinfo == timezone.utc
-
     def test_garbage_string_returns_none(self) -> None:
         result = _parse_date("not-a-date-at-all")
         assert result is None
-
     def test_unknown_type_returns_none(self) -> None:
-        assert _parse_date(42) is None  # type: ignore[arg-type]
-
-
-# ---------------------------------------------------------------------------
-# _extract_summary
-# ---------------------------------------------------------------------------
-
+        assert _parse_date(42) is None  
 def _make_entry(**kwargs: Any) -> Any:
-    """Build a minimal feedparser-like entry namespace."""
     entry = SimpleNamespace(**kwargs)
-    # feedparser entries expose content as a list of dicts.
     if not hasattr(entry, "content"):
         entry.content = []
     if not hasattr(entry, "summary"):
@@ -117,54 +66,37 @@ def _make_entry(**kwargs: Any) -> Any:
     if not hasattr(entry, "description"):
         entry.description = ""
     return entry
-
-
 class TestExtractSummary:
-    """Tests for summary/description field extraction."""
-
     def test_prefers_content_encoded(self) -> None:
         entry = _make_entry(content=[{"value": "Full content text"}])
         result = _extract_summary(entry)
         assert result == "Full content text"
-
     def test_falls_back_to_summary(self) -> None:
         entry = _make_entry(summary="Short summary text")
         result = _extract_summary(entry)
         assert result == "Short summary text"
-
     def test_strips_html_from_summary(self) -> None:
         entry = _make_entry(summary="<p>Hello <b>world</b></p>")
         result = _extract_summary(entry)
         assert "<" not in (result or "")
         assert "Hello" in (result or "")
         assert "world" in (result or "")
-
     def test_strips_html_from_content(self) -> None:
         entry = _make_entry(content=[{"value": "<div>Article <em>text</em></div>"}])
         result = _extract_summary(entry)
         assert "<" not in (result or "")
-
     def test_returns_none_when_all_empty(self) -> None:
         entry = _make_entry()
         result = _extract_summary(entry)
         assert result is None
-
     def test_whitespace_only_returns_none(self) -> None:
         entry = _make_entry(summary="   ")
         result = _extract_summary(entry)
         assert result is None
-
-
-# ---------------------------------------------------------------------------
-# parse_feed (integration — feedparser is mocked)
-# ---------------------------------------------------------------------------
-
 def _build_mock_feed(entries: list[dict[str, Any]]) -> MagicMock:
-    """Build a feedparser-like mock feed object."""
     mock_feed = MagicMock()
     mock_feed.bozo = False
     mock_feed.bozo_exception = None
-
     feed_entries = []
     for e in entries:
         entry = SimpleNamespace(
@@ -180,16 +112,10 @@ def _build_mock_feed(entries: list[dict[str, Any]]) -> MagicMock:
             updated=e.get("updated", None),
         )
         feed_entries.append(entry)
-
     mock_feed.entries = feed_entries
     return mock_feed
-
-
 class TestParseFeed:
-    """Integration tests for parse_feed using a mocked feedparser."""
-
     _SOURCE = {"name": "bbc", "label": "BBC News", "url": "http://feeds.bbci.co.uk/news/rss.xml"}
-
     def test_returns_list_of_dicts(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "https://bbc.co.uk/1", "title": "Test Article", "summary": "A summary"},
@@ -198,7 +124,6 @@ class TestParseFeed:
             result = parse_feed(self._SOURCE)
         assert isinstance(result, list)
         assert len(result) == 1
-
     def test_dict_contains_required_keys(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "https://bbc.co.uk/2", "title": "Another Article"},
@@ -208,14 +133,12 @@ class TestParseFeed:
         article = result[0]
         for key in ("url", "url_hash", "headline", "source", "published_at"):
             assert key in article, f"Missing key: {key}"
-
     def test_url_hash_is_sha256_of_url(self) -> None:
         url = "https://bbc.co.uk/specific-article"
         mock_feed = _build_mock_feed([{"link": url, "title": "Hash Test"}])
         with patch("src.feeds.parser.feedparser.parse", return_value=mock_feed):
             result = parse_feed(self._SOURCE)
         assert result[0]["url_hash"] == hashlib.sha256(url.encode()).hexdigest()
-
     def test_skips_entry_with_no_url(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "", "id": "", "title": "No URL Article"},
@@ -223,7 +146,6 @@ class TestParseFeed:
         with patch("src.feeds.parser.feedparser.parse", return_value=mock_feed):
             result = parse_feed(self._SOURCE)
         assert result == []
-
     def test_skips_entry_with_no_headline(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "https://bbc.co.uk/no-title", "title": ""},
@@ -231,7 +153,6 @@ class TestParseFeed:
         with patch("src.feeds.parser.feedparser.parse", return_value=mock_feed):
             result = parse_feed(self._SOURCE)
         assert result == []
-
     def test_published_at_falls_back_to_now(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "https://bbc.co.uk/no-date", "title": "No Date Article"},
@@ -240,10 +161,8 @@ class TestParseFeed:
         with patch("src.feeds.parser.feedparser.parse", return_value=mock_feed):
             result = parse_feed(self._SOURCE)
         after = datetime.now(timezone.utc)
-
         pub = result[0]["published_at"]
         assert before <= pub <= after
-
     def test_source_matches_feed_name(self) -> None:
         mock_feed = _build_mock_feed([
             {"link": "https://bbc.co.uk/src-test", "title": "Source Test"},
@@ -251,12 +170,10 @@ class TestParseFeed:
         with patch("src.feeds.parser.feedparser.parse", return_value=mock_feed):
             result = parse_feed(self._SOURCE)
         assert result[0]["source"] == "bbc"
-
     def test_handles_feedparser_exception_gracefully(self) -> None:
         with patch("src.feeds.parser.feedparser.parse", side_effect=Exception("network error")):
             result = parse_feed(self._SOURCE)
         assert result == []
-
     def test_multiple_entries(self) -> None:
         entries = [
             {"link": f"https://bbc.co.uk/{i}", "title": f"Article {i}"}

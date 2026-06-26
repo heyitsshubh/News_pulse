@@ -1,9 +1,6 @@
 import { query } from '../db/pool';
 import { ClusterListItem, Cluster } from '../types/cluster.types';
 import { Article } from '../types/article.types';
-
-// ── DB row shapes ────────────────────────────────────────────────────────────
-
 interface ClusterRow {
   id: string;
   label: string;
@@ -13,7 +10,6 @@ interface ClusterRow {
   created_at: string;
   updated_at: string;
 }
-
 interface ArticleRow {
   id: string;
   url: string;
@@ -23,9 +19,6 @@ interface ArticleRow {
   published_at: string | null;
   fetched_at: string;
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 function rowToClusterListItem(row: ClusterRow): ClusterListItem {
   return {
     id: row.id,
@@ -35,7 +28,6 @@ function rowToClusterListItem(row: ClusterRow): ClusterListItem {
     endTime: row.end_time,
   };
 }
-
 function rowToCluster(row: ClusterRow): Cluster {
   return {
     id: row.id,
@@ -47,7 +39,6 @@ function rowToCluster(row: ClusterRow): Cluster {
     updatedAt: row.updated_at,
   };
 }
-
 function rowToArticle(row: ArticleRow): Article {
   return {
     id: row.id,
@@ -59,14 +50,7 @@ function rowToArticle(row: ArticleRow): Article {
     fetchedAt: row.fetched_at,
   };
 }
-
-// ── Repository ───────────────────────────────────────────────────────────────
-
 export const clustersRepository = {
-  /**
-   * Return all clusters with the min/max published_at derived from their
-   * linked articles (used for the cluster list).
-   */
   async findAll(): Promise<ClusterListItem[]> {
     const sql = `
       SELECT
@@ -86,11 +70,6 @@ export const clustersRepository = {
     const result = await query<ClusterRow>(sql);
     return result.rows.map(rowToClusterListItem);
   },
-
-  /**
-   * Return a single cluster with full details plus all of its articles,
-   * sorted by published_at ASC.
-   */
   async findById(
     id: string,
   ): Promise<{ cluster: Cluster; articles: Article[] } | null> {
@@ -110,11 +89,9 @@ export const clustersRepository = {
       GROUP BY c.id, c.label, c.article_count, c.created_at, c.updated_at
     `;
     const clusterResult = await query<ClusterRow>(clusterSql, [id]);
-
     if (clusterResult.rows.length === 0) {
       return null;
     }
-
     const articlesSql = `
       SELECT
         a.id,
@@ -130,20 +107,12 @@ export const clustersRepository = {
       ORDER BY a.published_at ASC NULLS LAST
     `;
     const articlesResult = await query<ArticleRow>(articlesSql, [id]);
-
     return {
       cluster: rowToCluster(clusterResult.rows[0]),
       articles: articlesResult.rows.map(rowToArticle),
     };
   },
-
-  /**
-   * Return all clusters with their time ranges — used by the timeline service.
-   * Clusters with no linked articles (and therefore no timestamps) are still
-   * returned; the service will filter them out.
-   */
   async findAllWithTimeRange(): Promise<ClusterListItem[]> {
-    // Re-uses the same query as findAll — the shape is identical.
     return this.findAll();
   },
 };

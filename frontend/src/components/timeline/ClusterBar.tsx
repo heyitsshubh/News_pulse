@@ -1,5 +1,4 @@
 import React from 'react';
-
 interface ClusterBarProps {
   x?: number;
   y?: number;
@@ -10,11 +9,6 @@ interface ClusterBarProps {
   onClick?: () => void;
   clusterId?: string;
 }
-
-/**
- * Custom Recharts bar shape for the Gantt timeline.
- * Renders a rounded-rectangle gradient bar with glow on selection.
- */
 export const ClusterBar: React.FC<ClusterBarProps> = (props) => {
   const {
     x = 0,
@@ -25,22 +19,15 @@ export const ClusterBar: React.FC<ClusterBarProps> = (props) => {
     isSelected = false,
     onClick,
   } = props;
-
   if (!width || width <= 0) return null;
-
   const clampedIntensity = Math.max(0.1, Math.min(1, intensity));
-
-  // Color interpolation: low intensity = muted indigo, high = bright violet
   const startColor = `rgba(99, 102, 241, ${0.5 + clampedIntensity * 0.5})`;
   const endColor = `rgba(139, 92, 246, ${0.6 + clampedIntensity * 0.4})`;
-
   const barHeight = Math.max(height, 8);
   const barY = y + (height - barHeight) / 2;
   const radius = Math.min(6, barHeight / 2, width / 2);
-
   const gradId = `grad-${Math.abs(x * 1000).toFixed(0)}-${Math.abs(y * 100).toFixed(0)}`;
   const glowId = `glow-${Math.abs(x * 1000).toFixed(0)}-${Math.abs(y * 100).toFixed(0)}`;
-
   return (
     <g
       onClick={onClick}
@@ -61,8 +48,7 @@ export const ClusterBar: React.FC<ClusterBarProps> = (props) => {
           </filter>
         )}
       </defs>
-
-      {/* Glow backdrop when selected */}
+      {}
       {isSelected && (
         <rect
           x={x - 2}
@@ -74,8 +60,7 @@ export const ClusterBar: React.FC<ClusterBarProps> = (props) => {
           style={{ filter: 'blur(6px)' }}
         />
       )}
-
-      {/* Main bar */}
+      {}
       <rect
         x={x}
         y={barY}
@@ -90,8 +75,7 @@ export const ClusterBar: React.FC<ClusterBarProps> = (props) => {
           filter: isSelected ? `url(#${glowId})` : undefined,
         }}
       />
-
-      {/* Shine overlay */}
+      {}
       <rect
         x={x}
         y={barY}

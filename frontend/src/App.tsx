@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
-
 function App() {
   return (
     <BrowserRouter>
@@ -12,5 +11,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

@@ -1,10 +1,8 @@
 import React from 'react';
 import { Navbar } from './Navbar';
-
 interface AppShellProps {
   children: React.ReactNode;
 }
-
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   return (
     <div
@@ -17,7 +15,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         overflow: 'hidden',
       }}
     >
-      {/* Ambient background blobs */}
+      {}
       <div
         style={{
           position: 'fixed',
@@ -42,9 +40,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           zIndex: 0,
         }}
       />
-
       <Navbar />
-
       <main
         style={{
           flex: 1,

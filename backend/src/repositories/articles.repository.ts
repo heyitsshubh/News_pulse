@@ -1,6 +1,5 @@
 import { query } from '../db/pool';
 import { Article } from '../types/article.types';
-
 interface ArticleRow {
   id: string;
   url: string;
@@ -10,7 +9,6 @@ interface ArticleRow {
   published_at: string | null;
   fetched_at: string;
 }
-
 function rowToArticle(row: ArticleRow): Article {
   return {
     id: row.id,
@@ -22,12 +20,7 @@ function rowToArticle(row: ArticleRow): Article {
     fetchedAt: row.fetched_at,
   };
 }
-
 export const articlesRepository = {
-  /**
-   * Fetch all articles that belong to a given cluster, ordered
-   * chronologically (oldest first).
-   */
   async findByClusterId(clusterId: string): Promise<Article[]> {
     const sql = `
       SELECT

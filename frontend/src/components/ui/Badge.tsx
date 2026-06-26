@@ -1,5 +1,4 @@
 import React from 'react';
-
 interface BadgeProps {
   children?: React.ReactNode;
   color?: string;
@@ -8,19 +7,16 @@ interface BadgeProps {
   size?: 'sm' | 'md';
   style?: React.CSSProperties;
 }
-
 const SOURCE_COLORS: Record<string, string> = {
   bbc: '#ef4444',
   npr: '#3b82f6',
   guardian: '#14b8a6',
 };
-
 const SOURCE_LABELS: Record<string, string> = {
   bbc: 'BBC',
   npr: 'NPR',
   guardian: 'Guardian',
 };
-
 export const Badge: React.FC<BadgeProps> = ({
   children,
   color,
@@ -31,7 +27,6 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const resolvedColor = source ? SOURCE_COLORS[source] : (color ?? '#6366f1');
   const label = source ? SOURCE_LABELS[source] : children;
-
   const baseStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -57,6 +52,5 @@ export const Badge: React.FC<BadgeProps> = ({
         }),
     ...style,
   };
-
   return <span style={baseStyle}>{label}</span>;
 };

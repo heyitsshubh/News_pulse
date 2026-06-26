@@ -2,14 +2,11 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { toggleSource, setAllSources, clearSources } from '../../store/slices/filtersSlice';
 import { SOURCES } from '../../lib/constants';
-
 export const SourceFilter: React.FC = () => {
   const dispatch = useAppDispatch();
   const activeSources = useAppSelector((state) => state.filters.activeSources);
-
   const allActive = activeSources.length === SOURCES.length;
   const noneActive = activeSources.length === 0;
-
   return (
     <div
       style={{
@@ -31,7 +28,6 @@ export const SourceFilter: React.FC = () => {
       >
         Sources
       </span>
-
       {SOURCES.map((source) => {
         const isActive = activeSources.includes(source.key);
         return (
@@ -73,7 +69,7 @@ export const SourceFilter: React.FC = () => {
               }
             }}
           >
-            {/* Colored dot */}
+            {}
             <span
               style={{
                 width: '6px',
@@ -89,8 +85,7 @@ export const SourceFilter: React.FC = () => {
           </button>
         );
       })}
-
-      {/* Divider */}
+      {}
       <div
         style={{
           width: '1px',
@@ -99,8 +94,7 @@ export const SourceFilter: React.FC = () => {
           margin: '0 4px',
         }}
       />
-
-      {/* All / None quick toggles */}
+      {}
       <button
         onClick={() => (allActive ? dispatch(clearSources()) : dispatch(setAllSources()))}
         style={{

@@ -1,14 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SOURCES } from '../../lib/constants';
-
 interface FiltersState {
   activeSources: string[];
 }
-
 const initialState: FiltersState = {
   activeSources: SOURCES.map((s) => s.key),
 };
-
 const filtersSlice = createSlice({
   name: 'filters',
   initialState,
@@ -29,6 +26,5 @@ const filtersSlice = createSlice({
     },
   },
 });
-
 export const { toggleSource, setAllSources, clearSources } = filtersSlice.actions;
 export default filtersSlice.reducer;

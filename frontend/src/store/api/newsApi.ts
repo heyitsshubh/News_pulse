@@ -4,16 +4,13 @@ import type { Cluster } from '../../types/cluster';
 import type { Article } from '../../types/article';
 import type { TimelineItem } from '../../types/timeline';
 import type { IngestJob } from '../../types/job';
-
 export interface ClusterDetail extends Cluster {
   articles: Article[];
 }
-
 export interface TriggerIngestResponse {
   jobId: string;
   message: string;
 }
-
 export const newsApi = createApi({
   reducerPath: 'newsApi',
   baseQuery: fetchBaseQuery({ baseUrl: `${API_BASE}/api` }),
@@ -59,7 +56,6 @@ export const newsApi = createApi({
     }),
   }),
 });
-
 export const {
   useGetClustersQuery,
   useGetClusterByIdQuery,

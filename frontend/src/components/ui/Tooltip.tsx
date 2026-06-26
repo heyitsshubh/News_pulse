@@ -1,11 +1,9 @@
 import React, { useState, useRef } from 'react';
-
 interface TooltipProps {
   content: React.ReactNode;
   children: React.ReactElement;
   placement?: 'top' | 'bottom' | 'left' | 'right';
 }
-
 export const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,
@@ -14,7 +12,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLSpanElement>(null);
-
   const handleMouseEnter = (e: React.MouseEvent) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     if (placement === 'top') {
@@ -24,9 +21,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     }
     setVisible(true);
   };
-
   const handleMouseLeave = () => setVisible(false);
-
   return (
     <span
       ref={containerRef}

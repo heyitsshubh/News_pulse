@@ -3,14 +3,11 @@ import { Radio } from 'lucide-react';
 import { RefreshButton } from '../ingest/RefreshButton';
 import { useAppSelector } from '../../store/hooks';
 import { formatDistanceToNow } from 'date-fns';
-
 export const Navbar: React.FC = () => {
   const lastRefreshed = useAppSelector((state) => state.ingest.lastRefreshed);
-
   const refreshedText = lastRefreshed
     ? `Updated ${formatDistanceToNow(new Date(lastRefreshed), { addSuffix: true })}`
     : 'Not yet refreshed';
-
   return (
     <nav
       style={{
@@ -29,7 +26,7 @@ export const Navbar: React.FC = () => {
         boxShadow: '0 1px 0 rgba(99, 102, 241, 0.05)',
       }}
     >
-      {/* Logo */}
+      {}
       <div
         style={{
           display: 'flex',
@@ -84,8 +81,7 @@ export const Navbar: React.FC = () => {
           </span>
         </div>
       </div>
-
-      {/* Center: last refreshed */}
+      {}
       <div
         style={{
           display: 'flex',
@@ -109,8 +105,7 @@ export const Navbar: React.FC = () => {
         />
         {refreshedText}
       </div>
-
-      {/* Right: Refresh Button */}
+      {}
       <RefreshButton />
     </nav>
   );

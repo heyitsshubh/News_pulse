@@ -1,14 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
-
 interface SlidePanelProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
 }
-
 export const SlidePanel: React.FC<SlidePanelProps> = ({
   isOpen,
   onClose,
@@ -16,8 +14,6 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
   children,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
-
-  // Close on Escape key
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) onClose();
@@ -25,16 +21,13 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [isOpen, onClose]);
-
-  // Prevent body scroll when open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
-
   const panel = (
     <>
-      {/* Backdrop */}
+      {}
       <div
         onClick={onClose}
         style={{
@@ -48,8 +41,7 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
           transition: 'opacity 300ms ease',
         }}
       />
-
-      {/* Panel */}
+      {}
       <div
         ref={panelRef}
         style={{
@@ -72,7 +64,7 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
         aria-modal="true"
         aria-label={title}
       >
-        {/* Header */}
+        {}
         <div
           style={{
             display: 'flex',
@@ -127,8 +119,7 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
             <X size={16} />
           </button>
         </div>
-
-        {/* Content */}
+        {}
         <div
           style={{
             flex: 1,
@@ -141,6 +132,5 @@ export const SlidePanel: React.FC<SlidePanelProps> = ({
       </div>
     </>
   );
-
   return createPortal(panel, document.body);
 };

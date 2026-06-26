@@ -2,10 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, Compass } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-
 export const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
-
   return (
     <div
       style={{
@@ -29,7 +27,7 @@ export const NotFoundPage: React.FC = () => {
           maxWidth: '440px',
         }}
       >
-        {/* 404 graphic */}
+        {}
         <div
           className="animate-float"
           style={{
@@ -53,7 +51,7 @@ export const NotFoundPage: React.FC = () => {
           >
             404
           </div>
-          {/* Glow behind */}
+          {}
           <div
             style={{
               position: 'absolute',
@@ -63,8 +61,7 @@ export const NotFoundPage: React.FC = () => {
             }}
           />
         </div>
-
-        {/* Icon */}
+        {}
         <div
           style={{
             display: 'flex',
@@ -79,7 +76,6 @@ export const NotFoundPage: React.FC = () => {
         >
           <Compass size={28} color="#6366f1" />
         </div>
-
         <div>
           <h1
             style={{
@@ -103,7 +99,6 @@ export const NotFoundPage: React.FC = () => {
             Head back to the news timeline to stay informed.
           </p>
         </div>
-
         <Button
           variant="primary"
           size="lg"

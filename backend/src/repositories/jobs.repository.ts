@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../db/pool';
 import { IngestJob, JobStatus } from '../types/job.types';
-
 interface JobRow {
   id: string;
   status: string;
@@ -10,7 +9,6 @@ interface JobRow {
   error: string | null;
   created_at: string;
 }
-
 function rowToJob(row: JobRow): IngestJob {
   return {
     id: row.id,
@@ -21,12 +19,7 @@ function rowToJob(row: JobRow): IngestJob {
     createdAt: row.created_at,
   };
 }
-
 export const jobsRepository = {
-  /**
-   * Insert a new ingest job with status='running' and started_at = NOW().
-   * Returns the newly created job record.
-   */
   async create(): Promise<IngestJob> {
     const id = uuidv4();
     const sql = `
@@ -37,11 +30,6 @@ export const jobsRepository = {
     const result = await query<JobRow>(sql, [id]);
     return rowToJob(result.rows[0]);
   },
-
-  /**
-   * Look up a single job by its UUID.
-   * Returns null when the job is not found.
-   */
   async findById(id: string): Promise<IngestJob | null> {
     const sql = `
       SELECT id, status, started_at, finished_at, error, created_at
@@ -52,12 +40,6 @@ export const jobsRepository = {
     if (result.rows.length === 0) return null;
     return rowToJob(result.rows[0]);
   },
-
-  /**
-   * Transition a job to a terminal state.
-   * - 'done'   → sets finished_at = NOW()
-   * - 'failed' → sets finished_at = NOW() + error column
-   */
   async updateStatus(
     id: string,
     status: 'done' | 'failed',

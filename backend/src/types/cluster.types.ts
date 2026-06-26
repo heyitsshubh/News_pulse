@@ -7,7 +7,6 @@ export interface Cluster {
   createdAt: string;
   updatedAt: string;
 }
-
 export interface ClusterListItem {
   id: string;
   label: string;
