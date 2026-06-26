@@ -30,9 +30,13 @@ COPY backend/ ./backend/
 # Build backend
 RUN cd backend && npm run build
 
-# Environment variables will be provided by docker-compose
+# Environment variables required for Python scraper resolution
+ENV PYTHON_CMD=python
+ENV SCRAPER_PATH=/app/scraper/src/main.py
+ENV PYTHONPATH=/app/scraper
+
 EXPOSE 3001
 
-# Start the Node.js backend server
-WORKDIR /app/backend
-CMD ["node", "dist/index.js"]
+# Start script: Run DB migrations then start the Node.js backend
+WORKDIR /app
+CMD sh -c "cd /app/scraper && python -m src.db.migrate && cd /app/backend && node dist/index.js"
