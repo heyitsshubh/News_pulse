@@ -9,7 +9,7 @@ const envSchema = z.object({
     .transform((v) => parseInt(v, 10))
     .pipe(z.number().int().positive()),
   DATABASE_URL: z.string().url({ message: 'DATABASE_URL must be a valid URL' }),
-  FRONTEND_URL: z.string().url({ message: 'FRONTEND_URL must be a valid URL' }),
+  FRONTEND_URL: z.string().url().optional().default('https://news-pulse-taupe.vercel.app').transform((v) => v.replace(/\/$/, '')),
   PYTHON_CMD: z.string().optional().default('python3'),
   SCRAPER_PATH: z.string().min(1, { message: 'SCRAPER_PATH is required' }),
   NODE_ENV: z
