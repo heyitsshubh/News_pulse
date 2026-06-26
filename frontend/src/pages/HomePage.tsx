@@ -37,7 +37,7 @@ export const HomePage: React.FC = () => {
   // Since clusters don't directly carry source info in the timeline endpoint,
   // we show all clusters but filter is visually active on the source pills.
   // When backend returns source-annotated clusters this can be wired up.
-  const filteredItems: TimelineItem[] = timelineItems ?? [];
+  const filteredItems: TimelineItem[] = Array.isArray(timelineItems) ? timelineItems : [];
 
   return (
     <AppShell>

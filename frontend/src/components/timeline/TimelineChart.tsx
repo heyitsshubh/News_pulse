@@ -74,6 +74,7 @@ const CustomTooltip: React.FC<{
         maxWidth: '240px',
         fontFamily: 'var(--font-sans)',
         animation: 'fadeInFast 100ms ease',
+        pointerEvents: 'none',
       }}
     >
       <p
@@ -205,11 +206,18 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
 }) => {
   // Convert items to chart data: [startMs, endMs] tuples
   const chartData = useMemo(() => {
-    return items
+    const safeItems = Array.isArray(items) ? items : [];
+    return safeItems
       .filter((item) => item.start && item.end)
       .map((item) => {
         const startMs = new Date(item.start).getTime();
-        const endMs = new Date(item.end).getTime();
+        let endMs = new Date(item.end).getTime();
+        
+        // Ensure a minimum visual width (1 hour) so single-article clusters render a visible bar
+        if (endMs - startMs < 3600000) {
+          endMs = startMs + 3600000;
+        }
+
         return {
           ...item,
           startMs,
