@@ -21,14 +21,30 @@ export const newsApi = createApi({
   endpoints: (builder) => ({
     getClusters: builder.query<Cluster[], void>({
       query: () => '/clusters',
+      transformResponse: (response: any) => {
+        if (Array.isArray(response)) return response;
+        if (response && Array.isArray(response.clusters)) return response.clusters;
+        return [];
+      },
       providesTags: ['Clusters'],
     }),
     getClusterById: builder.query<ClusterDetail, string>({
       query: (id) => `/clusters/${id}`,
+      transformResponse: (response: any) => {
+        if (response && response.cluster && response.articles) {
+          return { ...response.cluster, articles: response.articles };
+        }
+        return response;
+      },
       providesTags: (_result, _err, id) => [{ type: 'Clusters', id }],
     }),
     getTimeline: builder.query<TimelineItem[], void>({
       query: () => '/timeline',
+      transformResponse: (response: any) => {
+        if (Array.isArray(response)) return response;
+        if (response && Array.isArray(response.items)) return response.items;
+        return [];
+      },
       providesTags: ['Timeline'],
     }),
     triggerIngest: builder.mutation<TriggerIngestResponse, void>({
