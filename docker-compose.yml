@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: news
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: news_pulse
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U news -d news_pulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://news:password@db:5432/news_pulse
+      - FRONTEND_URL=http://localhost:5173
+      - PYTHON_CMD=python
+      - SCRAPER_PATH=/app/scraper/src/main.py
+      - PYTHONPATH=/app/scraper
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Ensure the database tables are created on startup before starting backend
+    command: >
+      sh -c "cd /app/scraper && python -m src.db.migrate && cd /app/backend && node dist/index.js"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

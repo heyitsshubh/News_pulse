@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: news-pulse-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PYTHON_CMD
+        value: python3
+      - key: SCRAPER_PATH
+        value: ../scraper/src/main.py
